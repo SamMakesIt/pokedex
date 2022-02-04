@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import objectident
-import subprocess
+
 
 GPIO.setmode(GPIO.BCM)
 
