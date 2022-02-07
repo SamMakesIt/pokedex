@@ -12,14 +12,21 @@ cmd_end= ' 2>/dev/null'                ## cleans up the output from the terminal
 cmd_voice= '-ven+f4 '               ## Assigns which voice ill be using
 classNames = []                     ## coco.name
 #call([cmd_beg+text+cmd_end] shell=True)
-cv2Text = cv2.putText                           ##
-cv2.putText = classNames[classId - 1].upper()  ## not sure if this is right tbth
-classNames = classId                            ##
+##cv2Text = cv2.putText                           ##
+##cv2.putText = classNames[classId - 1].upper()  ## not sure if this is right tbth
+##classNames = classId                            ##
 classFile = "/home/pi/Desktop/pokedex/coco.names"  ## tells script where names are stored
 with open(classFile,"rt") as f:                        
     classNames = f.read().rstrip("\n").split("\n")
 configPath = "/home/pi/Desktop/pokedex/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt" #These 2 lines are the object detection DBs
 weightsPath = "/home/pi/Desktop/pokedex/frozen_inference_graph.pb"
+## pokedex entries file
+dexEntry = []
+pokedexEntry =  "/home/pi/Desktop/pokedex/dex.txt"
+with open(pokedexEntry,"rt") as f:
+    dexEntry = f.read().rstrip("\n").split("\n")
+    
+
 
 ## this is more standard detection stuff
 net = cv2.dnn_DetectionModel(weightsPath,configPath)
@@ -29,7 +36,7 @@ net.setInputMean((127.5, 127.5, 127.5))
 net.setInputSwapRB(True)
 
 ##this is the meat of the detection, tells it how to draw the box, and to label inside the box
-def getObjects(img, thres, nms, draw=True, objects=[]):
+def getObjects(img, thres, nms, draw=True, objects=[],):
     classIds, confs, bbox = net.detect(img,confThreshold=thres,nmsThreshold=nms)
     #print(classIds,bbox)
     if len(objects) == 0: objects = classNames
@@ -51,11 +58,11 @@ def getObjects(img, thres, nms, draw=True, objects=[]):
     return img,objectInfo
 
 ## this is the test function for TTS im lost here tbth
-def tts():
-    if cv2Text == 'DOG':
-        call([cmd_beg+cmd_voice+" I+am+a+dog"+cmd_end], shell=True)
-    if cv2Text == 'PERSON':
-        call([cmd_beg+cmd_voice+" I+am+a+person"+cmd_end], shell=True)
+def tts(foundClass, dexEntry):
+    dexEntry = pokedexEntry[dexId - 1]
+    if foundClass == dexEntry:
+        call([cmd_beg+cmd_voice+" 'I am a "+dexEntry+"'"+cmd_end], shell=True)
+    
 
 
 ## this is getting the video feed
@@ -69,10 +76,17 @@ if __name__ == "__main__":
 ## this is showing me the output on screen
     while True:
             success, img = cap.read()
-            result, objectInfo = getObjects(img,0.65,0.6, objects=['dog','person']), tts
-            #print(objectInfo)
-            cv2.imshow("Output",img)
+            result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
+            cv2.imshow("Output",result) ##print picture
             cv2.waitKey(1)
+            for obj in objectInfo:
+                foundClass = obj[1]   ##loop through objects identified in picture and speak 
+                tts(dexEntry) ##Traceback (most recent call last):
+                                ##File "/home/pi/Desktop/pokedex/objectident.py", line 84, in <module>
+                                ##tts(dexEntry) TypeError: tts() missing 1 required positional argument: 'dexEntry'
+
+            
+            
             
             
            
