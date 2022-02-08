@@ -58,11 +58,9 @@ def getObjects(img, thres, nms, draw=True, objects=[],):
 
 ## this is the test function for TTS im lost here tbth
 def tts(dexEntry):
-    
-    
     pokedexFile = os.path.abspath("dex/" + foundClass +'.txt')
     with open(pokedexFile,"r") as f:
-        dexEntry = f.read().rstrip("\n").split("\n")
+        dexEntry = f.read().rstrip()
     call([cmd_beg+cmd_voice+" 'I am a "+dexEntry+"'"+cmd_end], shell=True)
     
 
