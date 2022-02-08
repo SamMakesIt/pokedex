@@ -4,27 +4,26 @@ import cv2
 from num2words import num2words
 ##subprocess opens a terminal to run tts commands 
 from subprocess import call
+import os
 
 #thres = 0.45 # Threshold to detect object
 
 cmd_beg= 'sudo espeak '             ## puts sudo espeak in term
 cmd_end= ' 2>/dev/null'                ## cleans up the output from the terminal
 cmd_voice= '-ven+f4 '               ## Assigns which voice ill be using
+homeDir = "/home/pi/Desktop/pokedex/dex"
+
 classNames = []                     ## coco.name
-#call([cmd_beg+text+cmd_end] shell=True)
-##cv2Text = cv2.putText                           ##
-##cv2.putText = classNames[classId - 1].upper()  ## not sure if this is right tbth
-##classNames = classId                            ##
 classFile = "/home/pi/Desktop/pokedex/coco.names"  ## tells script where names are stored
 with open(classFile,"rt") as f:                        
     classNames = f.read().rstrip("\n").split("\n")
 configPath = "/home/pi/Desktop/pokedex/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt" #These 2 lines are the object detection DBs
 weightsPath = "/home/pi/Desktop/pokedex/frozen_inference_graph.pb"
 ## pokedex entries file
-dexEntry = []
-pokedexEntry =  "/home/pi/Desktop/pokedex/dex.txt"
-with open(pokedexEntry,"rt") as f:
-    dexEntry = f.read().rstrip("\n").split("\n")
+#dexEntry = []
+#pokedexFile =  "'/home/pi/Desktop/pokedex/'foundClass.txt"
+#with open(pokedexFile,"rt") as f:
+    #dexEntry = f.read().rstrip("\n").split("\n")
     
 
 
@@ -58,10 +57,13 @@ def getObjects(img, thres, nms, draw=True, objects=[],):
     return img,objectInfo
 
 ## this is the test function for TTS im lost here tbth
-def tts(foundClass, dexEntry):
-    dexEntry = pokedexEntry[dexId - 1]
-    if foundClass == dexEntry:
-        call([cmd_beg+cmd_voice+" 'I am a "+dexEntry+"'"+cmd_end], shell=True)
+def tts(dexEntry):
+    
+    
+    pokedexFile = os.path.abspath("dex/" + foundClass +'.txt')
+    with open(pokedexFile,"r") as f:
+        dexEntry = f.read().rstrip("\n").split("\n")
+    call([cmd_beg+cmd_voice+" 'I am a "+dexEntry+"'"+cmd_end], shell=True)
     
 
 
@@ -75,13 +77,15 @@ if __name__ == "__main__":
 
 ## this is showing me the output on screen
     while True:
+            
             success, img = cap.read()
             result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
             cv2.imshow("Output",result) ##print picture
             cv2.waitKey(1)
             for obj in objectInfo:
                 foundClass = obj[1]   ##loop through objects identified in picture and speak 
-                tts(dexEntry) ##Traceback (most recent call last):
+                
+                tts(foundClass) ##Traceback (most recent call last):
                                 ##File "/home/pi/Desktop/pokedex/objectident.py", line 84, in <module>
                                 ##tts(dexEntry) TypeError: tts() missing 1 required positional argument: 'dexEntry'
 
