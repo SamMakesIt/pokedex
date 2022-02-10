@@ -1,18 +1,27 @@
 import RPi.GPIO as GPIO
-import objectident
-import subprocess
+import subprocess 
+from gpiozero import Button
+import sys
 
-GPIO.setmode(GPIO.BCM)
+button = Button(17)
 
-GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-state = GPIO.input(17)
+def open_dex_and_die(program, exit_code=0):
+    # Start the dex
+    subprocess.Popen(program)
+    # close this script
+    sys.exit(exit_code)
 
-while True:
-    
-    if state == True:
-        print('camera is on')
-        exec(open("objectident.py").read())
-        break
-    elif state == False:
-        print('camera is off')
-        
+button.when_released = open_dex_and_die(['python', 'objectident.py'])
+
+
+
+
+
+
+
+
+
+
+
+
+

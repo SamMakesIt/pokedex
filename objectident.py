@@ -3,13 +3,16 @@ import cv2
 ##Lets tts say numbers
 from num2words import num2words
 ##subprocess opens a terminal to run tts commands 
-from subprocess import call
+import subprocess
 import os
+#Imports button controll
+from gpiozero import Button
+import sys
 
 #thres = 0.45 # Threshold to detect object
-
+button = Button(17)                 ## Sets button to 17
 cmd_beg= 'sudo espeak '             ## puts sudo espeak in term
-cmd_end= ' 2>/dev/null'                ## cleans up the output from the terminal
+cmd_end= ' 2>/dev/null'             ## cleans up the output from the terminal
 cmd_voice= '-ven+f4 '               ## Assigns which voice ill be using
 homeDir = "/home/pi/Desktop/pokedex/dex"
 
@@ -56,12 +59,19 @@ def getObjects(img, thres, nms, draw=True, objects=[],):
 
     return img,objectInfo
 
-## this is the test function for TTS im lost here tbth
+## this is the text to speech function. it calls the dex entries from /dex and reads the file
 def tts(dexEntry):
     pokedexFile = os.path.abspath("dex/" + foundClass +'.txt')
     with open(pokedexFile,"r") as f:
         dexEntry = f.read().rstrip()
     call([cmd_beg+cmd_voice+" 'I am a "+dexEntry+"'"+cmd_end], shell=True)
+    
+## Reopens the button press script killing this process   
+def open_button_and_die(program, exit_code=0):
+    # Start the dex
+    subprocess.Popen(program)
+    # close this script
+    sys.exit(exit_code)
     
 
 
@@ -80,12 +90,10 @@ if __name__ == "__main__":
             result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
             cv2.imshow("Output",result) ##print picture
             cv2.waitKey(1)
+            button.when_pressed = open_button_and_die(['python', 'switch.py'])
             for obj in objectInfo:
                 foundClass = obj[1]   ##loop through objects identified in picture and speak 
-                
-                tts(foundClass) ##Traceback (most recent call last):
-                                ##File "/home/pi/Desktop/pokedex/objectident.py", line 84, in <module>
-                                ##tts(dexEntry) TypeError: tts() missing 1 required positional argument: 'dexEntry'
+                tts(foundClass)       ## Reads outloud
 
             
             

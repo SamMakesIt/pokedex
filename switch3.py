@@ -1,48 +1,35 @@
-from gpiozero import Button
-import sys
-import os
-import subprocess
-from signal import pause
+import RPi.GPIO as GPIO
+import time
+import subprocess, os
+import signal
 
-button = Button(17)
-p = subprocess.Popen(['python', 'objectident.py', 'arg1', 'arg2'])
-##press = button.when_pressed
-restart = True
-
-
-##def turn_camera_on():
-	##print("camera is on")
-	##os.system("python objectident.py")
-	
-##def turn_camera_off():
-	##print("camera is not on")
-	##p.terminate()		
-	##p.wait()
-
-
-##for x in press: 
-	##if x == True:
-		##turn_camera_off
-	##elif x == False:
-		##turn_camera_on
-
-while restart:
-
-	while button.is_pressed == True:
-
-		if button.is_pressed:
-			print("camera is not on")
-			os.system("kill -9 %d"%(os.getppid())
-			
-		else
-			print("camera is on")
-			os.system("python objectident.py")
-			
-			
-			
-		
-		
-		
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO_switch = 17  # pin 18
+GPIO.setup(GPIO_switch,GPIO.IN)
 
 
 
+
+try:
+    
+   run = 0
+   while True :
+      if GPIO.input(GPIO_switch)==0 and run == 0:
+         print ("  Started")
+         rpistr = "/home/pi/Desktop/pokedex/objectident.py"
+         p=subprocess.Popen('open',rpistr,[shell=True], preexec_fn=os.setsid)
+         run = 1
+         while GPIO.input(GPIO_switch)==0:
+             time.sleep(0.1)
+      if GPIO.input(GPIO_switch)==0 and run == 1:
+         print ("  Stopped ") 
+         run = 0
+         os.killpg(p.pid, signal.SIGTERM)
+         while GPIO.input(GPIO_switch)==0:
+             time.sleep(0.1)
+       
+
+except KeyboardInterrupt:
+  print ("  Quit")
+  GPIO.cleanup() 
