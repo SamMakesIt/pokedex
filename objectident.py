@@ -66,7 +66,7 @@ def tts(dexEntry):
     pokedexFile = os.path.abspath("dex/" + foundClass +'.txt')
     with open(pokedexFile,"r") as f:
         dexEntry = f.read().rstrip()
-    call([cmd_beg+cmd_voice+" 'I am a "+dexEntry+"'"+cmd_end], shell=True)
+    subprocess.call([cmd_beg+cmd_voice+" 'I am a "+dexEntry+"'"+cmd_end], shell=True)
     
 ## Reopens the button press script killing this process   
 def open_button_and_die(program, exit_code=0):
@@ -74,6 +74,13 @@ def open_button_and_die(program, exit_code=0):
     subprocess.Popen(program)
     # close this script
     sys.exit(exit_code)
+    
+def recordFound(dexSeen):
+    recordDex = os.path.abspath("seen.txt")
+    with open(recordDex, "a") as f:
+        dexSeen.write(foundClass \n) 
+
+def dontRead():
     
 
 
@@ -101,7 +108,7 @@ if __name__ == "__main__":
         for obj in objectInfo:
             foundClass = obj[1]   ##loop through objects identified in picture and speak 
             tts(foundClass)       ## Reads outloud
-
+            recordFound()
             
             
             

@@ -16,7 +16,7 @@ def open_dex_and_die(program, exit_code=0):
     
 
 try:
-    button.when_released = lambda: open_dex_and_die(['python', 'objectident.py'])
+    button.when_released = open_dex_and_die(['python', 'objectident.py'])
     pause()
 
 finally:
