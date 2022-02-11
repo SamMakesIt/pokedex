@@ -9,8 +9,10 @@ import os
 from gpiozero import Button
 import sys
 
+
 #thres = 0.45 # Threshold to detect object
-button = Button(17)                 ## Sets button to 17
+button = Button(17)
+                 ## Sets button to 17
 cmd_beg= 'sudo espeak '             ## puts sudo espeak in term
 cmd_end= ' 2>/dev/null'             ## cleans up the output from the terminal
 cmd_voice= '-ven+f4 '               ## Assigns which voice ill be using
@@ -83,17 +85,22 @@ if __name__ == "__main__":
     cap.set(4,480)
     #cap.set(10,70)
 
+
+    
+
 ## this is showing me the output on screen
     while True:
-            
-            success, img = cap.read()
-            result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
-            cv2.imshow("Output",result) ##print picture
-            cv2.waitKey(1)
-            button.when_pressed = open_button_and_die(['python', 'switch.py'])
-            for obj in objectInfo:
-                foundClass = obj[1]   ##loop through objects identified in picture and speak 
-                tts(foundClass)       ## Reads outloud
+        
+        if button.is_pressed: 
+            open_button_and_die(['python', 'switch5.py'])    
+        success, img = cap.read()
+        result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
+        cv2.imshow("Output",result) ##print picture
+        cv2.waitKey(1)
+           
+        for obj in objectInfo:
+            foundClass = obj[1]   ##loop through objects identified in picture and speak 
+            tts(foundClass)       ## Reads outloud
 
             
             

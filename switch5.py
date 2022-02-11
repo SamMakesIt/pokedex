@@ -1,16 +1,23 @@
-import RPi.GPIO as GPIO
-import subprocess 
 from gpiozero import Button
+from signal import pause
+import subprocess
 import sys
 
 button = Button(17)
 
+
+
 def open_dex_and_die(program, exit_code=0):
+    
     # Start the dex
     subprocess.Popen(program)
     # close this script
     sys.exit(exit_code)
+    
 
+try:
+    button.when_released = lambda: open_dex_and_die(['python', 'objectident.py'])
+    pause()
 
-button.when_released = open_dex_and_die(['python', 'objectident.py'])
-button.when_pressed = print('camera off')
+finally:
+    pass
