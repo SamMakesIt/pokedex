@@ -75,12 +75,14 @@ def open_button_and_die(program, exit_code=0):
     # close this script
     sys.exit(exit_code)
     
-def recordFound(dexSeen):
+def recordFound(recordDex):
     recordDex = os.path.abspath("seen.txt")
     with open(recordDex, "a") as f:
-        dexSeen.write(foundClass \n) 
+        f.write(foundClass + "\n")
+ 
 
 def dontRead():
+    print('hi')
     
 
 
@@ -108,7 +110,8 @@ if __name__ == "__main__":
         for obj in objectInfo:
             foundClass = obj[1]   ##loop through objects identified in picture and speak 
             tts(foundClass)       ## Reads outloud
-            recordFound()
+            recordFound(foundClass)
+           
             
             
             
