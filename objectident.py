@@ -74,11 +74,14 @@ def open_button_and_die(program, exit_code=0):
     subprocess.Popen(program)
     # close this script
     sys.exit(exit_code)
-    
+## checks if foundClass is in seen.txt and if not Writes foundClass to seen.txt
 def recordFound(recordDex):
     recordDex = os.path.abspath("seen.txt")
-    with open(recordDex, "a") as f:
-        f.write(foundClass + "\n")
+    with open(recordDex, "a+") as f:
+        if foundClass in f.read():
+            print("already seen")
+        else:
+            f.write(foundClass + "\n")
  
 
 def dontRead():
