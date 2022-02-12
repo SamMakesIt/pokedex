@@ -76,6 +76,7 @@ def open_button_and_die(program, exit_code=0):
     sys.exit(exit_code)
 ## checks if foundClass is in seen.txt and if not Writes foundClass to seen.txt
 def recordFound(recordDex):
+    foundDex = foundClass
     recordDex = os.path.abspath("seen.txt")
     with open(recordDex, "a+") as f:
         if foundClass in f.read():
