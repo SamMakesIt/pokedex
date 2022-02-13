@@ -11,12 +11,14 @@ import sys
 
 
 #thres = 0.45 # Threshold to detect object
-button = Button(17)
-                 ## Sets button to 17
+
+button = Button(17)                 ## Sets button to 17
 cmd_beg= 'sudo espeak '             ## puts sudo espeak in term
 cmd_end= ' 2>/dev/null'             ## cleans up the output from the terminal
 cmd_voice= '-ven+f4 '               ## Assigns which voice ill be using
 homeDir = "/home/pi/Desktop/pokedex/dex"
+seen = False                           ##sets seen flag to false 
+
 
 classNames = []                     ## coco.name
 classFile = "/home/pi/Desktop/pokedex/coco.names"  ## tells script where names are stored
@@ -24,14 +26,8 @@ with open(classFile,"rt") as f:
     classNames = f.read().rstrip("\n").split("\n")
 configPath = "/home/pi/Desktop/pokedex/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt" #These 2 lines are the object detection DBs
 weightsPath = "/home/pi/Desktop/pokedex/frozen_inference_graph.pb"
-## pokedex entries file
-#dexEntry = []
-#pokedexFile =  "'/home/pi/Desktop/pokedex/'foundClass.txt"
-#with open(pokedexFile,"rt") as f:
-    #dexEntry = f.read().rstrip("\n").split("\n")
+
     
-
-
 ## this is more standard detection stuff
 net = cv2.dnn_DetectionModel(weightsPath,configPath)
 net.setInputSize(320,320)
@@ -74,16 +70,20 @@ def open_button_and_die(program, exit_code=0):
     subprocess.Popen(program)
     # close this script
     sys.exit(exit_code)
+    
 ## checks if foundClass is in seen.txt and if not Writes foundClass to seen.txt
-def recordFound(recordDex):
+def recordFound(seen):
     foundDex = foundClass
+    seen = compare(seen)
     recordDex = os.path.abspath("seen.txt")
-    with open(recordDex, "a+") as f:
-        if foundClass in f.read():
-            print("already seen")
-        else:
-            f.write(foundClass + "\n")
+    with open(recordDex, "a") as f:
+        if seen == False:
+            f.write(foundDex + "\n")
  
+def compare(foundClass):
+    if foundClass == open('seen.txt', 'rt').read().split('\n'):
+        seen = True
+    
 
 def dontRead():
     print('hi')
@@ -114,6 +114,7 @@ if __name__ == "__main__":
         for obj in objectInfo:
             foundClass = obj[1]   ##loop through objects identified in picture and speak 
             tts(foundClass)       ## Reads outloud
+            compare(foundClass)
             recordFound(foundClass)
            
             
