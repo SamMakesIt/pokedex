@@ -2,9 +2,19 @@ from gpiozero import Button
 from signal import pause
 import subprocess
 import sys
-
+## for the LCD screen
+import time
+import logging
+import spidev as SPI
+from lib import LCD_2inch4
+from PIL import Image,ImageDraw,ImageFont
 button = Button(17)
-
+#lcd
+RST = 27
+DC = 25
+BL = 18
+bus = 0 
+device = 0
 
 
 def open_dex_and_die(program, exit_code=0):
@@ -13,7 +23,9 @@ def open_dex_and_die(program, exit_code=0):
     subprocess.Popen(program)
     # close this script
     sys.exit(exit_code)
-    
+
+
+
 
 try:
     button.when_released = open_dex_and_die(['python', 'objectident.py'])

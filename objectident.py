@@ -8,9 +8,21 @@ import os
 #Imports button controll
 from gpiozero import Button
 import sys
-
+## for the LCD screen
+import time
+import logging
+import spidev as SPI
+from lib import LCD_2inch4
+from PIL import Image,ImageDraw,ImageFont
 
 #thres = 0.45 # Threshold to detect object
+
+# Raspberry Pi pin configuration for the LCD:
+RST = 27
+DC = 25
+BL = 18
+bus = 0 
+device = 0 
 
 button = Button(17)                 ## Sets button to 17
 cmd_beg= 'sudo espeak '             ## puts sudo espeak in term
@@ -88,6 +100,32 @@ def compare(foundClass):
 def dontRead():
     print('hi')
     
+def splashScreen():
+    try:
+        disp = LCD_2inch4.LCD_2inch4()              ##This block gets the LCD ready
+        # Initialize library.
+        disp.Init()
+        # Clear display.
+        disp.clear()
+
+        ## This block pulls and displayes the splash screen
+        image = Image.open('/home/pi/Desktop/pokedex/dexGraphics/splashscreen2.jpg')	
+        image = image.rotate(0)
+        disp.ShowImage(image)
+        time.sleep(3)
+        disp.module_exit()
+    
+    except IOError as e:
+        logging.info(e)    
+    except KeyboardInterrupt:
+        disp.module_exit()
+        logging.info("quit:")
+        exit()
+    
+def dexImage():    
+    print('nothing is here yet')
+
+
 
 
 ## this is getting the video feed
@@ -99,13 +137,13 @@ if __name__ == "__main__":
     #cap.set(10,70)
 
 
-    
+  
 
 ## this is showing me the output on screen
     while True:
-        
+        splashScreen()
         if button.is_pressed: 
-            open_button_and_die(['python', 'switch5.py'])    
+            open_button_and_die(['python', 'switch5.py'])
         success, img = cap.read()
         result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
         cv2.imshow("Output",result) ##print picture
