@@ -11,7 +11,6 @@ import sys
 ## for the LCD screen
 import time
 import logging
-import spidev as SPI
 from lib import LCD_2inch4
 from PIL import Image,ImageDraw,ImageFont
 
@@ -29,7 +28,7 @@ cmd_beg= 'sudo espeak '             ## puts sudo espeak in term
 cmd_end= ' 2>/dev/null'             ## cleans up the output from the terminal
 cmd_voice= '-ven+f4 '               ## Assigns which voice ill be using
 homeDir = "/home/pi/Desktop/pokedex/dex"
-seen = False                           ##sets seen flag to false 
+                           ##sets seen flag to false 
 
 
 classNames = []                     ## coco.name
@@ -74,7 +73,7 @@ def tts(dexEntry):
     pokedexFile = os.path.abspath("dex/" + foundClass +'.txt')
     with open(pokedexFile,"r") as f:
         dexEntry = f.read().rstrip()
-    subprocess.call([cmd_beg+cmd_voice+" 'I am a "+dexEntry+"'"+cmd_end], shell=True)
+    subprocess.call([cmd_beg+cmd_voice+dexEntry+cmd_end], shell=True)
     
 ## Reopens the button press script killing this process   
 def open_button_and_die(program, exit_code=0):
@@ -84,11 +83,9 @@ def open_button_and_die(program, exit_code=0):
     sys.exit(exit_code)
     
 ## checks if foundClass is in seen.txt and if not Writes foundClass to seen.txt
-def recordFound(seen):
-    foundDex = foundClass
-    seen = compare(seen)
+def recordFound(foundClass):
     recordDex = os.path.abspath("seen.txt")
-    with open(recordDex, "a") as f:
+    with open(recordDex, "a+") as f:
         if seen == False:
             f.write(foundDex + "\n")
  
@@ -101,6 +98,7 @@ def dontRead():
     print('hi')
     
 def splashScreen():
+    
     try:
         disp = LCD_2inch4.LCD_2inch4()              ##This block gets the LCD ready
         # Initialize library.
@@ -122,8 +120,28 @@ def splashScreen():
         logging.info("quit:")
         exit()
     
-def dexImage():    
-    print('nothing is here yet')
+def dexImage(foundClass):    
+    pokedexImage = os.path.abspath("dexGraphics/" + foundClass +'.jpg')
+    try:
+        disp = LCD_2inch4.LCD_2inch4()              ##This block gets the LCD ready
+        # Initialize library.
+        disp.Init()
+        # Clear display.
+        disp.clear()
+
+        ## This block pulls and displayes the splash screen
+        image = Image.open(pokedexImage)	
+        image = image.rotate(0)
+        disp.ShowImage(image)
+        time.sleep(3)
+        disp.module_exit()
+    
+    except IOError as e:
+        logging.info(e)    
+    except KeyboardInterrupt:
+        disp.module_exit()
+        logging.info("quit:")
+        exit()
 
 
 
@@ -152,9 +170,8 @@ if __name__ == "__main__":
         for obj in objectInfo:
             foundClass = obj[1]   ##loop through objects identified in picture and speak 
             tts(foundClass)       ## Reads outloud
-            compare(foundClass)
             recordFound(foundClass)
-           
+            dexImage(foundClass)
             
             
             

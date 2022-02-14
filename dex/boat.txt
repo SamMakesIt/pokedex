@@ -1,0 +1,1 @@
+"Boat, the floating object, floats on water, mostly seen on lakes."

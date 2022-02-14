@@ -1,0 +1,1 @@
+"Baseball Glove, the catching object, used to catch the sports ball."
