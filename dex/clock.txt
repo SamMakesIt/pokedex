@@ -1,0 +1,1 @@
+"Clock, The time telling object. Moves slower when looking at it."

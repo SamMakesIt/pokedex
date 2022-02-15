@@ -1,0 +1,1 @@
+"Oven, The slower cooking object. Used to make tasty food."

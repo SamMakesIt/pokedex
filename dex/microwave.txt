@@ -1,0 +1,1 @@
+"Microwave, The fact cooking object. Used to heat food fast."

@@ -1,0 +1,1 @@
+"Refrigerator, The cold object. Keeps food and drinks cold."

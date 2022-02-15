@@ -1,0 +1,1 @@
+"Fork, The poking object. Used to stab food."

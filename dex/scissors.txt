@@ -1,0 +1,1 @@
+"Scissors, The crafting object. Used to cut paper and fabric."

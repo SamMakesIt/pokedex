@@ -1,0 +1,1 @@
+"Sink, The cleaning object. Put dirty dishes in here to clean them."

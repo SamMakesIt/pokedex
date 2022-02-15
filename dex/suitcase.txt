@@ -1,0 +1,1 @@
+"Suitcase, The travel object. Used for packing for trips."
