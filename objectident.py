@@ -28,7 +28,7 @@ cmd_beg= 'sudo espeak '             ## puts sudo espeak in term
 cmd_end= ' 2>/dev/null'             ## cleans up the output from the terminal
 cmd_voice= '-ven+f4 '               ## Assigns which voice ill be using
 homeDir = "/home/pi/Desktop/pokedex/dex"
-                           ##sets seen flag to false 
+seen = False                           ##sets seen flag to false 
 
 
 classNames = []                     ## coco.name
@@ -87,10 +87,10 @@ def recordFound(foundClass):
     recordDex = os.path.abspath("seen.txt")
     with open(recordDex, "a+") as f:
         if seen == False:
-            f.write(foundDex + "\n")
+            f.write(foundClass + "\n")
  
 def compare(foundClass):
-    if foundClass == open('seen.txt', 'rt').read().split('\n'):
+    if foundClass == open('seen.txt', 'r').read().split('\n'):
         seen = True
     
 
@@ -121,7 +121,7 @@ def splashScreen():
         exit()
     
 def dexImage(foundClass):    
-    pokedexImage = os.path.abspath("dexGraphics/" + foundClass +'.jpg')
+    pokedexImage = os.path.abspath("dexGraphics/dexEntryGraphics/" + foundClass +'.jpg')
     try:
         disp = LCD_2inch4.LCD_2inch4()              ##This block gets the LCD ready
         # Initialize library.
@@ -170,6 +170,7 @@ if __name__ == "__main__":
         for obj in objectInfo:
             foundClass = obj[1]   ##loop through objects identified in picture and speak 
             tts(foundClass)       ## Reads outloud
+            compare(foundClass)
             recordFound(foundClass)
             dexImage(foundClass)
             

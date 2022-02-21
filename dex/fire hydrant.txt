@@ -1,1 +1,1 @@
-"Fire Hydrant, The water object. Used by city kids to cool off in the summer."
+"Fire Hydrant, The water object. Sprays water at fires."

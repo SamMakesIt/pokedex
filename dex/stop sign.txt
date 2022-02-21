@@ -1,1 +1,1 @@
-"Stop Sign, The optional object. You should stop at them, nost people don't."
+"Stop Sign, The optional object. You should stop at them."

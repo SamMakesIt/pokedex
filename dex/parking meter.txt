@@ -1,1 +1,1 @@
-"Parking Meter, The money hungry object. They are dumb and should not be a thing."
+"Parking Meter, The money hungry object. They are dumb."
