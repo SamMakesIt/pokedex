@@ -83,13 +83,13 @@ def open_button_and_die(program, exit_code=0):
     sys.exit(exit_code)
     
 ## checks if foundClass is in seen.txt and if not Writes foundClass to seen.txt
-def recordFound(foundClass):
+def recordFound(foundClass, seen):
     recordDex = os.path.abspath("seen.txt")
     with open(recordDex, "a+") as f:
         if seen == False:
             f.write(foundClass + "\n")
  
-def compare(foundClass):
+def compare(foundClass, seen):
     if foundClass == open('seen.txt', 'r').read().split('\n'):
         seen = True
     
@@ -170,8 +170,8 @@ if __name__ == "__main__":
         for obj in objectInfo:
             foundClass = obj[1]   ##loop through objects identified in picture and speak 
             tts(foundClass)       ## Reads outloud
-            compare(foundClass)
-            recordFound(foundClass)
+            compare(foundClass, seen)
+            recordFound(foundClass, seen)
             dexImage(foundClass)
             
             
