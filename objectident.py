@@ -71,9 +71,13 @@ def getObjects(img, thres, nms, draw=True, objects=[],):
 ## this is the text to speech function. it calls the dex entries from /dex and reads the file
 def tts(dexEntry):
     pokedexFile = os.path.abspath("dex/" + foundClass +'.txt')
-    with open(pokedexFile,"r") as f:
-        dexEntry = f.read().rstrip()
-    subprocess.call([cmd_beg+cmd_voice+dexEntry+cmd_end], shell=True)
+    seenFile = os.path.abspath("seen/" + foundClass +'.txt')
+    if os.path.isfile(seenFile):
+        pass
+    else:
+        with open(pokedexFile,"r") as f:
+            dexEntry = f.read().rstrip()
+        subprocess.call([cmd_beg+cmd_voice+dexEntry+cmd_end], shell=True)
     
 ## Reopens the button press script killing this process   
 def open_button_and_die(program, exit_code=0):
@@ -83,19 +87,14 @@ def open_button_and_die(program, exit_code=0):
     sys.exit(exit_code)
     
 ## checks if foundClass is in seen.txt and if not Writes foundClass to seen.txt
-def recordFound(foundClass, seen):
-    recordDex = os.path.abspath("seen.txt")
-    with open(recordDex, "a+") as f:
-        if seen == False:
-            f.write(foundClass + "\n")
- 
-def compare(foundClass, seen):
-    if foundClass == open('seen.txt', 'r').read().split('\n'):
-        seen = True
+def recordFound(fileFound):
+    seenFile = os.path.abspath("seen/" + foundClass +'.txt')
+    if os.path.isfile(seenFile):
+        pass
+    else:
+        f = open(seenFile, "w")
+        f.close()
     
-
-def dontRead():
-    print('hi')
     
 def splashScreen():
     
@@ -121,7 +120,7 @@ def splashScreen():
         exit()
     
 def dexImage(foundClass):    
-    pokedexImage = os.path.abspath("dexGraphics/dexEntryGraphics/" + foundClass +'.jpg')
+    
     try:
         disp = LCD_2inch4.LCD_2inch4()              ##This block gets the LCD ready
         # Initialize library.
@@ -129,8 +128,8 @@ def dexImage(foundClass):
         # Clear display.
         disp.clear()
 
-        ## This block pulls and displayes the splash screen
-        image = Image.open(pokedexImage)	
+        ## This block pulls and display the dex entry
+        image = Image.open("/home/pi/Desktop/pokedex/dexGraphics/dexEntryGraphics/"+ foundClass +'.jpg')
         image = image.rotate(0)
         disp.ShowImage(image)
         time.sleep(3)
@@ -169,10 +168,10 @@ if __name__ == "__main__":
            
         for obj in objectInfo:
             foundClass = obj[1]   ##loop through objects identified in picture and speak 
-            tts(foundClass)       ## Reads outloud
-            compare(foundClass, seen)
-            recordFound(foundClass, seen)
             dexImage(foundClass)
+            tts(foundClass)       ## Reads outloud
+            recordFound(foundClass)
+            
             
             
             
