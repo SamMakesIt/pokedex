@@ -21,14 +21,16 @@ RST = 27
 DC = 25
 BL = 18
 bus = 0 
-device = 0 
+device = 0
 
-button = Button(17)                 ## Sets button to 17
+
+button1 = Button(17)                ## Sets button to 17
+button2 = Button()
+button3 = Button()
 cmd_beg= 'sudo espeak '             ## puts sudo espeak in term
 cmd_end= ' 2>/dev/null'             ## cleans up the output from the terminal
 cmd_voice= '-ven+f4 '               ## Assigns which voice ill be using
 homeDir = "/home/pi/Desktop/pokedex/dex"
-seen = False                           ##sets seen flag to false 
 
 
 classNames = []                     ## coco.name
@@ -80,11 +82,21 @@ def tts(dexEntry):
         subprocess.call([cmd_beg+cmd_voice+dexEntry+cmd_end], shell=True)
     
 ## Reopens the button press script killing this process   
-def open_button_and_die(program, exit_code=0):
+def open_switch_and_die(program, exit_code=0):
     # Start the dex
     subprocess.Popen(program)
     # close this script
     sys.exit(exit_code)
+    
+def open_seenDex_and_die(program, exit_code=0):
+    # Start the dex
+    subprocess.Popen(program)
+    # close this script
+    sys.exit(exit_code)
+    
+def delete_seen():
+    # Start the dex
+    
     
 ## checks if foundClass is in seen.txt and if not Writes foundClass to seen.txt
 def recordFound(fileFound):
@@ -95,7 +107,7 @@ def recordFound(fileFound):
         f = open(seenFile, "w")
         f.close()
     
-    
+   
 def splashScreen():
     
     try:
@@ -118,7 +130,7 @@ def splashScreen():
         disp.module_exit()
         logging.info("quit:")
         exit()
-    
+  
 def dexImage(foundClass):    
     
     try:
@@ -159,8 +171,12 @@ if __name__ == "__main__":
 ## this is showing me the output on screen
     while True:
         splashScreen()
-        if button.is_pressed: 
-            open_button_and_die(['python', 'switch5.py'])
+        if button1.is_pressed: 
+            open_switch_and_die(['python', 'switch5.py'])
+        if button2.is_pressed: 
+            open_switch_and_die(['python', 'switch4.py'])
+        if button3.is_pressed:
+            delete_seen()
         success, img = cap.read()
         result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
         cv2.imshow("Output",result) ##print picture
