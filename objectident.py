@@ -14,25 +14,27 @@ import logging
 from lib import LCD_2inch4
 from PIL import Image,ImageDraw,ImageFont
 import glob
+import spidev as SPI
+
 
 #thres = 0.45 # Threshold to detect object
 
 # Raspberry Pi pin configuration for the LCD:
 RST = 27
 DC = 25
-BL = 18
+BL = 6
 bus = 0 
 device = 0
 
 
 button1 = Button(17)                ## Sets button to 17
-#button2 = Button()
-#button3 = Button()
+#button2 = Button(16)
+button3 = Button(22)
 cmd_beg= 'sudo espeak -s160 '             ## puts sudo espeak in term
 cmd_end= ' 2>/dev/null'             ## cleans up the output from the terminal
 cmd_voice= '-ven+m5 '               ## Assigns which voice ill be using
 homeDir = "/home/pi/Desktop/pokedex/dex"
-objectSeen = False
+splashRan = False
 
 classNames = []                     ## coco.name
 classFile = "/home/pi/Desktop/pokedex/coco.names"  ## tells script where names are stored
@@ -111,61 +113,43 @@ def recordFound(fileFound):
         f.close()
     
    
-def splashScreen(objectSeen):
+def splashScreen():
     
-    try:
-        disp = LCD_2inch4.LCD_2inch4()              ##This block gets the LCD ready
+    
+    disp = LCD_2inch4.LCD_2inch4(spi=SPI.SpiDev(bus, device),spi_freq=10000000,rst=RST,dc=DC,bl=BL)              ##This block gets the LCD ready
         # Initialize library.
-        disp.Init()
+    disp.Init()
         # Clear display.
-        disp.clear()
+    disp.clear()
         
         
-
-        ## This block pulls and displayes the splash screen
-        if objectSeen == False:
-            image = Image.open('/home/pi/Desktop/pokedex/dexGraphics/splashscreen2.jpg')	
-            image = image.rotate(0)
-            disp.ShowImage(image)
-            time.sleep(3)
-            disp.module_exit()
-        else:
-            image = Image.open("/home/pi/Desktop/pokedex/dexGraphics/dexEntryGraphics/"+ foundClass +'.jpg')
-            image = image.rotate(0)
-            disp.ShowImage(image)
-            time.sleep(3)
-            disp.module_exit()
     
-    except IOError as e:
-        logging.info(e)    
-    except KeyboardInterrupt:
-        disp.module_exit()
-        logging.info("quit:")
-        exit()
-  
+    image = Image.open('/home/pi/Desktop/pokedex/dexGraphics/splashscreen2.jpg')	
+    image = image.rotate(0)
+    disp.ShowImage(image)
+    time.sleep(3)
+    disp.module_exit()
+    
+   
 def dexImage(foundClass):    
     
-    try:
-        disp = LCD_2inch4.LCD_2inch4()              ##This block gets the LCD ready
-        # Initialize library.
-        disp.Init()
-        # Clear display.
-        disp.clear()
 
-        ## This block pulls and display the dex entry
+    disp = LCD_2inch4.LCD_2inch4(spi=SPI.SpiDev(bus, device),spi_freq=10000000,rst=RST,dc=DC,bl=BL)              ##This block gets the LCD ready
+    # Initialize library.
+    disp.Init()
+    # Clear display.
+    disp.clear()
+
+    seenFile = os.path.abspath("seen/" + foundClass +'.txt')
+
+    if os.path.isfile(seenFile):
+        pass
+    else:
         image = Image.open("/home/pi/Desktop/pokedex/dexGraphics/dexEntryGraphics/"+ foundClass +'.jpg')
         image = image.rotate(0)
         disp.ShowImage(image)
         time.sleep(3)
         disp.module_exit()
-    
-    except IOError as e:
-        logging.info(e)    
-    except KeyboardInterrupt:
-        disp.module_exit()
-        logging.info("quit:")
-        exit()
-
 
 
 
@@ -182,25 +166,33 @@ if __name__ == "__main__":
 
 ## this is showing me the output on screen
     while True:
-        objectSeen = False
-        splashScreen(objectSeen)
+        
+        
+        
+        if splashRan == False:
+            splashScreen()
+            splashRan = True
         if button1.is_pressed: 
             open_switch_and_die(['python', 'switch5.py'])
         #if button2.is_pressed: 
            # open_switch_and_die(['python', 'switch4.py'])
-        #if button3.is_pressed:
-            #delete_seen()
+        if button3.is_pressed:
+            delete_seen()
         success, img = cap.read()
         result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
         cv2.imshow("Output",result) ##print picture
         cv2.waitKey(1)
           
         for obj in objectInfo:
-            foundClass = obj[1]   ##loop through objects identified in picture and speak 
-            objectSeen = True 
-            splashScreen(foundClass)
-            tts(foundClass)       ## Reads outloud
-            recordFound(foundClass)
+            foundClass = obj[1]   ##loop through objects identified in picture and speak  
+            seenFile = os.path.abspath("seen/" + foundClass +'.txt')
+            if os.path.isfile(seenFile):
+                pass
+            else:
+                dexImage(foundClass)
+                splashRan = False
+                tts(foundClass)       ## Reads outloud
+                recordFound(foundClass)
             
             
             
