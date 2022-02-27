@@ -28,20 +28,20 @@ device = 0
 
 
 button1 = Button(17)                ## Sets button to 17
-#button2 = Button(16)
+button2 = Button(16)
 button3 = Button(22)
 cmd_beg= 'sudo espeak -s160 '             ## puts sudo espeak in term
 cmd_end= ' 2>/dev/null'             ## cleans up the output from the terminal
 cmd_voice= '-ven+m5 '               ## Assigns which voice ill be using
-homeDir = "/home/pi/Desktop/pokedex/dex"
+homeDir = "/home/pi/dex"
 splashRan = False
 
 classNames = []                     ## coco.name
-classFile = "/home/pi/Desktop/pokedex/coco.names"  ## tells script where names are stored
+classFile = "/home/pi/coco.names"  ## tells script where names are stored
 with open(classFile,"rt") as f:                        
     classNames = f.read().rstrip("\n").split("\n")
-configPath = "/home/pi/Desktop/pokedex/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt" #These 2 lines are the object detection DBs
-weightsPath = "/home/pi/Desktop/pokedex/frozen_inference_graph.pb"
+configPath = "/home/pi/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt" #These 2 lines are the object detection DBs
+weightsPath = "/home/pi/frozen_inference_graph.pb"
 
     
 ## this is more standard detection stuff
@@ -99,7 +99,7 @@ def open_seenDex_and_die(program, exit_code=0):
     
 def delete_seen():
     # Start the dex
-    dir = '/home/pi/Desktop/pokedex/seen'
+    dir = '/home/pi/seen'
     for file in os.scandir(dir):
         os.remove(file.path)
     
@@ -124,7 +124,7 @@ def splashScreen():
         
         
     
-    image = Image.open('/home/pi/Desktop/pokedex/dexGraphics/splashscreen2.jpg')	
+    image = Image.open('/home/pi/dexGraphics/splashscreen2.jpg')	
     image = image.rotate(0)
     disp.ShowImage(image)
     time.sleep(3)
@@ -145,7 +145,7 @@ def dexImage(foundClass):
     if os.path.isfile(seenFile):
         pass
     else:
-        image = Image.open("/home/pi/Desktop/pokedex/dexGraphics/dexEntryGraphics/"+ foundClass +'.jpg')
+        image = Image.open("/home/pi/dexGraphics/dexEntryGraphics/"+ foundClass +'.jpg')
         image = image.rotate(0)
         disp.ShowImage(image)
         time.sleep(3)
@@ -174,12 +174,12 @@ if __name__ == "__main__":
             splashRan = True
         if button1.is_pressed: 
             open_switch_and_die(['python', 'switch5.py'])
-        #if button2.is_pressed: 
-           # open_switch_and_die(['python', 'switch4.py'])
+        if button2.is_pressed: 
+            open_switch_and_die(['python', 'switch4.py'])
         if button3.is_pressed:
             delete_seen()
         success, img = cap.read()
-        result, objectInfo = getObjects(img,0.60,0.9, objects = ['dog','person'])
+        result, objectInfo = getObjects(img,0.60,0.9)
         cv2.imshow("Output",result) ##print picture
         cv2.waitKey(1)
           

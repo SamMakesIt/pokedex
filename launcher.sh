@@ -5,4 +5,4 @@
 cd /
 cd home/pi/Desktop/pokedex/
 sudo python objectident.py
-cd /
+
